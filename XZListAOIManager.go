@@ -16,10 +16,11 @@ func NewXZListAOICalculator() AOIManager {
 }
 
 // Enter is called when Entity enters Space
-func (aoiman *XZListAOIManager) Enter(aoi *AOI, x,y Coord) {
+func (aoiman *XZListAOIManager) Enter(aoi *AOI, x, y Coord) {
 	aoi.x, aoi.y = x, y
 	aoiman.xSweepList.Insert(aoi)
 	aoiman.zSweepList.Insert(aoi)
+	aoiman.adjust(aoi)
 }
 
 // Leave is called when Entity leaves Space
@@ -39,6 +40,7 @@ func (aoiman *XZListAOIManager) Moved(aoi *AOI, x, y Coord) {
 	if oldY != y {
 		aoiman.zSweepList.Move(aoi, oldY)
 	}
+	aoiman.adjust(aoi)
 }
 
 // adjust is called by Entity to adjust neighbors
@@ -52,7 +54,9 @@ func (aoiman *XZListAOIManager) adjust(aoi *AOI) {
 			neighbor.markVal = -2 // mark this as neighbor
 		} else { // markVal < 2
 			// was neighbor, but not any more
+			aoi.neighbors.Remove(neighbor)
 			aoi.Callback.OnLeaveAOI(neighbor)
+			neighbor.neighbors.Remove(aoi)
 			neighbor.Callback.OnLeaveAOI(aoi)
 		}
 	}

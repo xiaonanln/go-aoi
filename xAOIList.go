@@ -149,7 +149,9 @@ func (sl *xAOIList) GetClearMarkedNeighbors(aoi *AOI) {
 	minCoord := coord - _DEFAULT_AOI_DISTANCE
 	for prev != nil && prev.x >= minCoord {
 		if prev.markVal == 2 {
+			aoi.neighbors.Add(prev)
 			aoi.Callback.OnEnterAOI(prev)
+			prev.neighbors.Add(aoi)
 			prev.Callback.OnEnterAOI(aoi)
 		}
 		prev.markVal = 0
