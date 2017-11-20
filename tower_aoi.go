@@ -1,5 +1,7 @@
 package aoi
 
+import "log"
+
 type TowerAOIManager struct {
 	minX, maxX, minY, maxY Coord
 	towerRange             Coord
@@ -87,11 +89,25 @@ func (t *tower) removeObj(obj *aoiobj) {
 }
 
 func (t *tower) addWatcher(obj *aoiobj) {
+	if _, ok := t.watchers[obj]; ok {
+		log.Panicf("duplicate add watcher")
+	}
 	t.watchers[obj] = struct{}{}
+	// now obj can see all objs under this tower
+	for neighbor := range t.objs {
+		obj.aoi.Callback.OnEnterAOI(neighbor.aoi)
+	}
 }
 
 func (t *tower) removeWatcher(obj *aoiobj) {
+	if _, ok := t.watchers[obj]; !ok {
+		log.Panicf("duplicate remove watcher")
+	}
+
 	delete(t.watchers, obj)
+	for neighbor := range t.objs {
+		obj.aoi.Callback.OnLeaveAOI(neighbor.aoi)
+	}
 }
 
 type aoiobj struct {
