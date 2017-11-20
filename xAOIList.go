@@ -1,28 +1,28 @@
 package aoi
 
 type xAOIList struct {
-	head *AOI
-	tail *AOI
+	head *xzaoi
+	tail *xzaoi
 }
 
 func newXAOIList() *xAOIList {
 	return &xAOIList{}
 }
 
-func (sl *xAOIList) Insert(aoi *AOI) {
-	insertCoord := aoi.x
+func (sl *xAOIList) Insert(aoi *xzaoi) {
+	insertCoord := aoi.aoi.x
 	if sl.head != nil {
 		p := sl.head
-		for p != nil && p.x < insertCoord {
+		for p != nil && p.aoi.x < insertCoord {
 			p = p.xNext
 		}
 		// now, p == nil or p.coord >= insertCoord
-		if p == nil { // if p == nil, insert AOI at the end of list
+		if p == nil { // if p == nil, insert xzaoi at the end of list
 			tail := sl.tail
 			tail.xNext = aoi
 			aoi.xPrev = tail
 			sl.tail = aoi
-		} else { // otherwise, p >= AOI, insert AOI before p
+		} else { // otherwise, p >= xzaoi, insert xzaoi before p
 			prev := p.xPrev
 			aoi.xNext = p
 			p.xPrev = aoi
@@ -30,7 +30,7 @@ func (sl *xAOIList) Insert(aoi *AOI) {
 
 			if prev != nil {
 				prev.xNext = aoi
-			} else { // p is the head, so AOI should be the new head
+			} else { // p is the head, so xzaoi should be the new head
 				sl.head = aoi
 			}
 		}
@@ -40,7 +40,7 @@ func (sl *xAOIList) Insert(aoi *AOI) {
 	}
 }
 
-func (sl *xAOIList) Remove(aoi *AOI) {
+func (sl *xAOIList) Remove(aoi *xzaoi) {
 	prev := aoi.xPrev
 	next := aoi.xNext
 	if prev != nil {
@@ -57,27 +57,27 @@ func (sl *xAOIList) Remove(aoi *AOI) {
 	}
 }
 
-func (sl *xAOIList) Move(aoi *AOI, oldCoord Coord) {
-	coord := aoi.x
+func (sl *xAOIList) Move(aoi *xzaoi, oldCoord Coord) {
+	coord := aoi.aoi.x
 	if coord > oldCoord {
 		// moving to next ...
 		next := aoi.xNext
-		if next == nil || next.x >= coord {
+		if next == nil || next.aoi.x >= coord {
 			// no need to adjust in list
 			return
 		}
 		prev := aoi.xPrev
-		//fmt.Println(1, prev, next, prev == nil || prev.xNext == AOI)
+		//fmt.Println(1, prev, next, prev == nil || prev.xNext == xzaoi)
 		if prev != nil {
-			prev.xNext = next // remove AOI from list
+			prev.xNext = next // remove xzaoi from list
 		} else {
-			sl.head = next // AOI is the head, trim it
+			sl.head = next // xzaoi is the head, trim it
 		}
 		next.xPrev = prev
 
 		//fmt.Println(2, prev, next, prev == nil || prev.xNext == next)
 		prev, next = next, next.xNext
-		for next != nil && next.x < coord {
+		for next != nil && next.aoi.x < coord {
 			prev, next = next, next.xNext
 			//fmt.Println(2, prev, next, prev == nil || prev.xNext == next)
 		}
@@ -96,7 +96,7 @@ func (sl *xAOIList) Move(aoi *AOI, oldCoord Coord) {
 	} else {
 		// moving to prev ...
 		prev := aoi.xPrev
-		if prev == nil || prev.x <= coord {
+		if prev == nil || prev.aoi.x <= coord {
 			// no need to adjust in list
 			return
 		}
@@ -105,12 +105,12 @@ func (sl *xAOIList) Move(aoi *AOI, oldCoord Coord) {
 		if next != nil {
 			next.xPrev = prev
 		} else {
-			sl.tail = prev // AOI is the head, trim it
+			sl.tail = prev // xzaoi is the head, trim it
 		}
-		prev.xNext = next // remove AOI from list
+		prev.xNext = next // remove xzaoi from list
 
 		next, prev = prev, prev.xPrev
-		for prev != nil && prev.x > coord {
+		for prev != nil && prev.aoi.x > coord {
 			next, prev = prev, prev.xPrev
 		}
 		// no we have next.X > coord && (prev == nil || prev.X <= coord), so insert between prev and next
@@ -125,34 +125,34 @@ func (sl *xAOIList) Move(aoi *AOI, oldCoord Coord) {
 	}
 }
 
-func (sl *xAOIList) Mark(aoi *AOI) {
+func (sl *xAOIList) Mark(aoi *xzaoi) {
 	prev := aoi.xPrev
-	coord := aoi.x
+	coord := aoi.aoi.x
 
 	minCoord := coord - _DEFAULT_AOI_DISTANCE
-	for prev != nil && prev.x >= minCoord {
+	for prev != nil && prev.aoi.x >= minCoord {
 		prev.markVal += 1
 		prev = prev.xPrev
 	}
 
 	next := aoi.xNext
 	maxCoord := coord + _DEFAULT_AOI_DISTANCE
-	for next != nil && next.x <= maxCoord {
+	for next != nil && next.aoi.x <= maxCoord {
 		next.markVal += 1
 		next = next.xNext
 	}
 }
 
-func (sl *xAOIList) GetClearMarkedNeighbors(aoi *AOI) {
+func (sl *xAOIList) GetClearMarkedNeighbors(aoi *xzaoi) {
 	prev := aoi.xPrev
-	coord := aoi.x
+	coord := aoi.aoi.x
 	minCoord := coord - _DEFAULT_AOI_DISTANCE
-	for prev != nil && prev.x >= minCoord {
+	for prev != nil && prev.aoi.x >= minCoord {
 		if prev.markVal == 2 {
-			aoi.neighbors.Add(prev)
-			aoi.Callback.OnEnterAOI(prev)
-			prev.neighbors.Add(aoi)
-			prev.Callback.OnEnterAOI(aoi)
+			aoi.neighbors[prev] = struct{}{}
+			aoi.aoi.Callback.OnEnterAOI(prev.aoi)
+			prev.neighbors[aoi] = struct{}{}
+			prev.aoi.Callback.OnEnterAOI(aoi.aoi)
 		}
 		prev.markVal = 0
 		prev = prev.xPrev
@@ -160,10 +160,10 @@ func (sl *xAOIList) GetClearMarkedNeighbors(aoi *AOI) {
 
 	next := aoi.xNext
 	maxCoord := coord + _DEFAULT_AOI_DISTANCE
-	for next != nil && next.x <= maxCoord {
+	for next != nil && next.aoi.x <= maxCoord {
 		if next.markVal == 2 {
-			aoi.Callback.OnEnterAOI(next)
-			next.Callback.OnEnterAOI(aoi)
+			aoi.aoi.Callback.OnEnterAOI(next.aoi)
+			next.aoi.Callback.OnEnterAOI(aoi.aoi)
 		}
 		next.markVal = 0
 		next = next.xNext

@@ -5,18 +5,22 @@ type Coord float32
 type AOI struct {
 	x        Coord
 	y        Coord
+	dist     Coord
 	Callback AOICallback
 
-	// Fields for XZListAOIManager
-	neighbors    AOISet
-	xPrev, xNext *AOI
-	yPrev, yNext *AOI
-	markVal      int
+	implData interface{}
+
+	//// Fields for XZListAOIManager
+	//neighbors    AOISet
+	//xPrev, xNext *AOI
+	//yPrev, yNext *AOI
+	//markVal      int
 }
 
-func InitAOI(aoi *AOI, callback AOICallback) {
+func InitAOI(aoi *AOI, dist Coord, callback AOICallback) {
+	aoi.dist = dist
 	aoi.Callback = callback
-	aoi.neighbors = make(AOISet)
+	//aoi.neighbors = make(AOISet)
 }
 
 type AOICallback interface {

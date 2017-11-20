@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"reflect"
 	"testing"
 	"time"
 	"unsafe"
@@ -20,6 +21,10 @@ const (
 
 func TestXZListAOIManager(t *testing.T) {
 	testAOI(NewXZListAOICalculator(), NUM_OBJS)
+}
+
+func TestTowerAOIManager(t *testing.T) {
+	testAOI(NewTowerAOIManager(MIN_X, MAX_X, MIN_Y, MAX_Y, 100), NUM_OBJS)
 }
 
 type TestObj struct {
@@ -53,7 +58,7 @@ func testAOI(aoiman AOIManager, numAOI int) {
 	objs := []*TestObj{}
 	for i := 0; i < numAOI; i++ {
 		obj := &TestObj{Id: i + 1}
-		InitAOI(&obj.aoi, obj)
+		InitAOI(&obj.aoi, _DEFAULT_AOI_DISTANCE, obj)
 		objs = append(objs, obj)
 		aoiman.Enter(&obj.aoi, randCoord(MIN_X, MAX_X), randCoord(MIN_Y, MAX_Y))
 	}
@@ -64,7 +69,8 @@ func testAOI(aoiman AOIManager, numAOI int) {
 			aoiman.Moved(&obj.aoi, obj.aoi.x+randCoord(-10, 10), obj.aoi.y+randCoord(-10, 10))
 		}
 		dt := time.Now().Sub(t0)
-		log.Printf("%T tick %d objects takes %s", aoiman, numAOI, dt)
+		log.Printf("%T tick %d objects takes %s", reflect.Indirect(reflect.ValueOf(aoiman)).Interface(), numAOI, dt)
 	}
 
+	// verify the correctness here ?L
 }

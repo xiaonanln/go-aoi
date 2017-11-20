@@ -2,6 +2,14 @@ package aoi
 
 const _DEFAULT_AOI_DISTANCE = 100
 
+type xzaoi struct {
+	aoi          *AOI
+	neighbors    map[*xzaoi]struct{}
+	xPrev, xNext *xzaoi
+	yPrev, yNext *xzaoi
+	markVal      int
+}
+
 // XZListAOIManager is an implementation of AOICalculator using XZ lists
 type XZListAOIManager struct {
 	xSweepList *xAOIList
@@ -17,16 +25,22 @@ func NewXZListAOICalculator() AOIManager {
 
 // Enter is called when Entity enters Space
 func (aoiman *XZListAOIManager) Enter(aoi *AOI, x, y Coord) {
+	xzaoi := &xzaoi{
+		aoi:       aoi,
+		neighbors: map[*xzaoi]struct{}{},
+	}
 	aoi.x, aoi.y = x, y
-	aoiman.xSweepList.Insert(aoi)
-	aoiman.zSweepList.Insert(aoi)
-	aoiman.adjust(aoi)
+	aoi.implData = xzaoi
+	aoiman.xSweepList.Insert(xzaoi)
+	aoiman.zSweepList.Insert(xzaoi)
+	aoiman.adjust(xzaoi)
 }
 
 // Leave is called when Entity leaves Space
 func (aoiman *XZListAOIManager) Leave(aoi *AOI) {
-	aoiman.xSweepList.Remove(aoi)
-	aoiman.zSweepList.Remove(aoi)
+	xzaoi := aoi.implData.(*xzaoi)
+	aoiman.xSweepList.Remove(xzaoi)
+	aoiman.zSweepList.Remove(xzaoi)
 }
 
 // Moved is called when Entity moves in Space
@@ -34,17 +48,18 @@ func (aoiman *XZListAOIManager) Moved(aoi *AOI, x, y Coord) {
 	oldX := aoi.x
 	oldY := aoi.y
 	aoi.x, aoi.y = x, y
+	xzaoi := aoi.implData.(*xzaoi)
 	if oldX != x {
-		aoiman.xSweepList.Move(aoi, oldX)
+		aoiman.xSweepList.Move(xzaoi, oldX)
 	}
 	if oldY != y {
-		aoiman.zSweepList.Move(aoi, oldY)
+		aoiman.zSweepList.Move(xzaoi, oldY)
 	}
-	aoiman.adjust(aoi)
+	aoiman.adjust(xzaoi)
 }
 
 // adjust is called by Entity to adjust neighbors
-func (aoiman *XZListAOIManager) adjust(aoi *AOI) {
+func (aoiman *XZListAOIManager) adjust(aoi *xzaoi) {
 	aoiman.xSweepList.Mark(aoi)
 	aoiman.zSweepList.Mark(aoi)
 	// AOI marked twice are neighbors
@@ -54,10 +69,10 @@ func (aoiman *XZListAOIManager) adjust(aoi *AOI) {
 			neighbor.markVal = -2 // mark this as neighbor
 		} else { // markVal < 2
 			// was neighbor, but not any more
-			aoi.neighbors.Remove(neighbor)
-			aoi.Callback.OnLeaveAOI(neighbor)
-			neighbor.neighbors.Remove(aoi)
-			neighbor.Callback.OnLeaveAOI(aoi)
+			delete(aoi.neighbors, neighbor)
+			aoi.aoi.Callback.OnLeaveAOI(neighbor.aoi)
+			delete(neighbor.neighbors, aoi)
+			neighbor.aoi.Callback.OnLeaveAOI(aoi.aoi)
 		}
 	}
 

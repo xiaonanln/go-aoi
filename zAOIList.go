@@ -1,28 +1,28 @@
 package aoi
 
 type yAOIList struct {
-	head *AOI
-	tail *AOI
+	head *xzaoi
+	tail *xzaoi
 }
 
 func newYAOIList() *yAOIList {
 	return &yAOIList{}
 }
 
-func (sl *yAOIList) Insert(aoi *AOI) {
-	insertCoord := aoi.y
+func (sl *yAOIList) Insert(aoi *xzaoi) {
+	insertCoord := aoi.aoi.y
 	if sl.head != nil {
 		p := sl.head
-		for p != nil && p.y < insertCoord {
+		for p != nil && p.aoi.y < insertCoord {
 			p = p.yNext
 		}
 		// now, p == nil or p.coord >= insertCoord
-		if p == nil { // if p == nil, insert AOI at the end of list
+		if p == nil { // if p == nil, insert xzaoi at the end of list
 			tail := sl.tail
 			tail.yNext = aoi
 			aoi.yPrev = tail
 			sl.tail = aoi
-		} else { // otherwise, p >= AOI, insert AOI before p
+		} else { // otherwise, p >= xzaoi, insert xzaoi before p
 			prev := p.yPrev
 			aoi.yNext = p
 			p.yPrev = aoi
@@ -30,7 +30,7 @@ func (sl *yAOIList) Insert(aoi *AOI) {
 
 			if prev != nil {
 				prev.yNext = aoi
-			} else { // p is the head, so AOI should be the new head
+			} else { // p is the head, so xzaoi should be the new head
 				sl.head = aoi
 			}
 		}
@@ -40,7 +40,7 @@ func (sl *yAOIList) Insert(aoi *AOI) {
 	}
 }
 
-func (sl *yAOIList) Remove(aoi *AOI) {
+func (sl *yAOIList) Remove(aoi *xzaoi) {
 	prev := aoi.yPrev
 	next := aoi.yNext
 	if prev != nil {
@@ -57,27 +57,27 @@ func (sl *yAOIList) Remove(aoi *AOI) {
 	}
 }
 
-func (sl *yAOIList) Move(aoi *AOI, oldCoord Coord) {
-	coord := aoi.y
+func (sl *yAOIList) Move(aoi *xzaoi, oldCoord Coord) {
+	coord := aoi.aoi.y
 	if coord > oldCoord {
 		// moving to next ...
 		next := aoi.yNext
-		if next == nil || next.y >= coord {
+		if next == nil || next.aoi.y >= coord {
 			// no need to adjust in list
 			return
 		}
 		prev := aoi.yPrev
-		//fmt.Println(1, prev, next, prev == nil || prev.yNext == AOI)
+		//fmt.Println(1, prev, next, prev == nil || prev.yNext == xzaoi)
 		if prev != nil {
-			prev.yNext = next // remove AOI from list
+			prev.yNext = next // remove xzaoi from list
 		} else {
-			sl.head = next // AOI is the head, trim it
+			sl.head = next // xzaoi is the head, trim it
 		}
 		next.yPrev = prev
 
 		//fmt.Println(2, prev, next, prev == nil || prev.yNext == next)
 		prev, next = next, next.yNext
-		for next != nil && next.y < coord {
+		for next != nil && next.aoi.y < coord {
 			prev, next = next, next.yNext
 			//fmt.Println(2, prev, next, prev == nil || prev.yNext == next)
 		}
@@ -96,7 +96,7 @@ func (sl *yAOIList) Move(aoi *AOI, oldCoord Coord) {
 	} else {
 		// moving to prev ...
 		prev := aoi.yPrev
-		if prev == nil || prev.y <= coord {
+		if prev == nil || prev.aoi.y <= coord {
 			// no need to adjust in list
 			return
 		}
@@ -105,12 +105,12 @@ func (sl *yAOIList) Move(aoi *AOI, oldCoord Coord) {
 		if next != nil {
 			next.yPrev = prev
 		} else {
-			sl.tail = prev // AOI is the head, trim it
+			sl.tail = prev // xzaoi is the head, trim it
 		}
-		prev.yNext = next // remove AOI from list
+		prev.yNext = next // remove xzaoi from list
 
 		next, prev = prev, prev.yPrev
-		for prev != nil && prev.y > coord {
+		for prev != nil && prev.aoi.y > coord {
 			next, prev = prev, prev.yPrev
 		}
 		// no we have next.X > coord && (prev == nil || prev.X <= coord), so insert between prev and next
@@ -125,37 +125,37 @@ func (sl *yAOIList) Move(aoi *AOI, oldCoord Coord) {
 	}
 }
 
-func (sl *yAOIList) Mark(aoi *AOI) {
+func (sl *yAOIList) Mark(aoi *xzaoi) {
 	prev := aoi.yPrev
-	coord := aoi.y
+	coord := aoi.aoi.y
 
 	minCoord := coord - _DEFAULT_AOI_DISTANCE
-	for prev != nil && prev.y >= minCoord {
+	for prev != nil && prev.aoi.y >= minCoord {
 		prev.markVal += 1
 		prev = prev.yPrev
 	}
 
 	next := aoi.yNext
 	maxCoord := coord + _DEFAULT_AOI_DISTANCE
-	for next != nil && next.y <= maxCoord {
+	for next != nil && next.aoi.y <= maxCoord {
 		next.markVal += 1
 		next = next.yNext
 	}
 }
 
-func (sl *yAOIList) ClearMark(aoi *AOI) {
+func (sl *yAOIList) ClearMark(aoi *xzaoi) {
 	prev := aoi.yPrev
-	coord := aoi.y
+	coord := aoi.aoi.y
 
 	minCoord := coord - _DEFAULT_AOI_DISTANCE
-	for prev != nil && prev.y >= minCoord {
+	for prev != nil && prev.aoi.y >= minCoord {
 		prev.markVal = 0
 		prev = prev.yPrev
 	}
 
 	next := aoi.yNext
 	maxCoord := coord + _DEFAULT_AOI_DISTANCE
-	for next != nil && next.y <= maxCoord {
+	for next != nil && next.aoi.y <= maxCoord {
 		next.markVal = 0
 		next = next.yNext
 	}
