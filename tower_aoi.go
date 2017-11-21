@@ -37,10 +37,10 @@ func (aoiman *TowerAOIManager) Moved(aoi *AOI, x, y Coord) {
 	obj := aoi.implData.(*aoiobj)
 	t0 := obj.tower
 	t1 := aoiman.getTowerXY(x, y)
-	if t1 == t0 {
-		return
+
+	if t0 != t1 {
+		t0.removeObj(obj, false)
 	}
-	t0.removeObj(obj, false)
 
 	oximin, oximax, oyimin, oyimax := aoiman.getWatchedTowers(oldx, oldy, aoi.dist)
 	ximin, ximax, yimin, yimax := aoiman.getWatchedTowers(x, y, aoi.dist)
@@ -67,7 +67,9 @@ func (aoiman *TowerAOIManager) Moved(aoi *AOI, x, y Coord) {
 		}
 	}
 
-	t1.addObj(obj, t0)
+	if t0 != t1 {
+		t1.addObj(obj, t0)
+	}
 }
 
 func (aoiman *TowerAOIManager) transXY(x, y Coord) (int, int) {
@@ -100,10 +102,12 @@ func (aoiman *TowerAOIManager) getTowerXY(x, y Coord) *tower {
 }
 
 func (aoiman *TowerAOIManager) getWatchedTowers(x, y Coord, aoiDistance Coord) (int, int, int, int) {
-	aoiTowerNum := int(aoiDistance/aoiman.towerRange) + 1
-	ximid, yimid := aoiman.transXY(x, y)
-	ximin, ximax := aoiman.normalizeXi(ximid-aoiTowerNum), aoiman.normalizeXi(ximid+aoiTowerNum)
-	yimin, yimax := aoiman.normalizeYi(yimid-aoiTowerNum), aoiman.normalizeYi(yimid+aoiTowerNum)
+	ximin, yimin := aoiman.transXY(x-aoiDistance, y-aoiDistance)
+	ximax, yimax := aoiman.transXY(x+aoiDistance, y+aoiDistance)
+	//aoiTowerNum := int(aoiDistance/aoiman.towerRange) + 1
+	//ximid, yimid := aoiman.transXY(x, y)
+	//ximin, ximax := aoiman.normalizeXi(ximid-aoiTowerNum), aoiman.normalizeXi(ximid+aoiTowerNum)
+	//yimin, yimax := aoiman.normalizeYi(yimid-aoiTowerNum), aoiman.normalizeYi(yimid+aoiTowerNum)
 	return ximin, ximax, yimin, yimax
 }
 
