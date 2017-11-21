@@ -40,6 +40,7 @@ func (aoiman *TowerAOIManager) Moved(aoi *AOI, x, y Coord) {
 
 	if t0 != t1 {
 		t0.removeObj(obj, false)
+		t1.addObj(obj, t0)
 	}
 
 	oximin, oximax, oyimin, oyimax := aoiman.getWatchedTowers(oldx, oldy, aoi.dist)
@@ -65,10 +66,6 @@ func (aoiman *TowerAOIManager) Moved(aoi *AOI, x, y Coord) {
 			tower := &aoiman.towers[xi][yi]
 			tower.addWatcher(obj)
 		}
-	}
-
-	if t0 != t1 {
-		t1.addObj(obj, t0)
 	}
 }
 
@@ -206,7 +203,7 @@ func (t *tower) addWatcher(obj *aoiobj) {
 	// now obj can see all objs under this tower
 	for neighbor := range t.objs {
 		if neighbor == obj {
-			log.Panicf("watcher is obj")
+			continue
 		}
 		obj.aoi.Callback.OnEnterAOI(neighbor.aoi)
 	}
@@ -220,7 +217,7 @@ func (t *tower) removeWatcher(obj *aoiobj) {
 	delete(t.watchers, obj)
 	for neighbor := range t.objs {
 		if neighbor == obj {
-			log.Panicf("watcher is obj")
+			continue
 		}
 		obj.aoi.Callback.OnLeaveAOI(neighbor.aoi)
 	}
