@@ -20,7 +20,6 @@ type AOI struct {
 func InitAOI(aoi *AOI, dist Coord, callback AOICallback) {
 	aoi.dist = dist
 	aoi.Callback = callback
-	//aoi.neighbors = make(AOISet)
 }
 
 type AOICallback interface {

@@ -162,7 +162,9 @@ func (sl *xAOIList) GetClearMarkedNeighbors(aoi *xzaoi) {
 	maxCoord := coord + _DEFAULT_AOI_DISTANCE
 	for next != nil && next.aoi.x <= maxCoord {
 		if next.markVal == 2 {
+			aoi.neighbors[next] = struct{}{}
 			aoi.aoi.Callback.OnEnterAOI(next.aoi)
+			next.neighbors[aoi] = struct{}{}
 			next.aoi.Callback.OnEnterAOI(aoi.aoi)
 		}
 		next.markVal = 0
