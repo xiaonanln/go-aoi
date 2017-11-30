@@ -22,11 +22,11 @@ const (
 )
 
 func TestXZListAOIManager(t *testing.T) {
-	testAOI("XZListAOI", NewXZListAOICalculator(), NUM_OBJS)
+	testAOI(t, "XZListAOI", NewXZListAOICalculator(), NUM_OBJS)
 }
 
 func TestTowerAOIManager(t *testing.T) {
-	testAOI("TowerAOI", NewTowerAOIManager(MIN_X, MAX_X, MIN_Y, MAX_Y, 10), NUM_OBJS)
+	testAOI(t, "TowerAOI", NewTowerAOIManager(MIN_X, MAX_X, MIN_Y, MAX_Y, 10), NUM_OBJS)
 }
 
 type TestObj struct {
@@ -47,7 +47,6 @@ func (obj *TestObj) OnEnterAOI(otheraoi *AOI) {
 			log.Panicf("duplicae enter aoi")
 		}
 		obj.neighbors[other] = struct{}{}
-		//log.Printf("%s: enter aoi %s", obj, obj.getObj(other))
 		obj.totalNeighbors += int64(len(obj.neighbors))
 		obj.nCalc += 1
 	}
@@ -63,7 +62,6 @@ func (obj *TestObj) OnLeaveAOI(otheraoi *AOI) {
 			log.Panicf("duplicate leave aoi")
 		}
 		delete(obj.neighbors, other)
-		//log.Printf("%s: leave aoi %s", obj, obj.getObj(other))
 		obj.totalNeighbors += int64(len(obj.neighbors))
 		obj.nCalc += 1
 	}
@@ -81,7 +79,7 @@ func randCoord(min, max Coord) Coord {
 	return min + Coord(rand.Intn(int(max)-int(min)))
 }
 
-func testAOI(manname string, aoiman AOIManager, numAOI int) {
+func testAOI(t *testing.T, manname string, aoiman AOIManager, numAOI int) {
 	objs := []*TestObj{}
 	for i := 0; i < numAOI; i++ {
 		obj := &TestObj{Id: i + 1, neighbors: map[*TestObj]struct{}{}}
@@ -100,7 +98,7 @@ func testAOI(manname string, aoiman AOIManager, numAOI int) {
 			aoiman.Moved(&obj.aoi, obj.aoi.x+randCoord(-10, 10), obj.aoi.y+randCoord(-10, 10))
 		}
 		dt := time.Now().Sub(t0)
-		log.Printf("%s tick %d objects takes %s", manname, numAOI, dt)
+		t.Logf("%s tick %d objects takes %s", manname, numAOI, dt)
 	}
 
 	for _, obj := range objs {
