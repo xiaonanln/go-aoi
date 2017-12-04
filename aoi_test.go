@@ -8,7 +8,6 @@ import (
 	"runtime/pprof"
 	"testing"
 	"time"
-	"unsafe"
 )
 
 const (
@@ -72,7 +71,7 @@ func (obj *TestObj) String() string {
 }
 
 func (obj *TestObj) getObj(aoi *AOI) *TestObj {
-	return (*TestObj)(unsafe.Pointer(aoi))
+	return aoi.Data.(*TestObj)
 }
 
 func randCoord(min, max Coord) Coord {
@@ -83,7 +82,7 @@ func testAOI(t *testing.T, manname string, aoiman AOIManager, numAOI int) {
 	objs := []*TestObj{}
 	for i := 0; i < numAOI; i++ {
 		obj := &TestObj{Id: i + 1, neighbors: map[*TestObj]struct{}{}}
-		InitAOI(&obj.aoi, _DEFAULT_AOI_DISTANCE, obj)
+		InitAOI(&obj.aoi, _DEFAULT_AOI_DISTANCE, obj, obj)
 		objs = append(objs, obj)
 		aoiman.Enter(&obj.aoi, randCoord(MIN_X, MAX_X), randCoord(MIN_Y, MAX_Y))
 	}

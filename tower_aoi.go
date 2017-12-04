@@ -157,7 +157,7 @@ func (t *tower) addObj(obj *aoiobj, fromOtherTower *tower) {
 			if watcher == obj {
 				continue
 			}
-			watcher.aoi.Callback.OnEnterAOI(obj.aoi)
+			watcher.aoi.callback.OnEnterAOI(obj.aoi)
 		}
 	} else {
 		// obj moved from other tower to this tower
@@ -168,7 +168,7 @@ func (t *tower) addObj(obj *aoiobj, fromOtherTower *tower) {
 			if _, ok := t.watchers[watcher]; ok {
 				continue
 			}
-			watcher.aoi.Callback.OnLeaveAOI(obj.aoi)
+			watcher.aoi.callback.OnLeaveAOI(obj.aoi)
 		}
 		for watcher := range t.watchers {
 			if watcher == obj {
@@ -177,7 +177,7 @@ func (t *tower) addObj(obj *aoiobj, fromOtherTower *tower) {
 			if _, ok := fromOtherTower.watchers[watcher]; ok {
 				continue
 			}
-			watcher.aoi.Callback.OnEnterAOI(obj.aoi)
+			watcher.aoi.callback.OnEnterAOI(obj.aoi)
 		}
 	}
 }
@@ -190,7 +190,7 @@ func (t *tower) removeObj(obj *aoiobj, notifyWatchers bool) {
 			if watcher == obj {
 				continue
 			}
-			watcher.aoi.Callback.OnLeaveAOI(obj.aoi)
+			watcher.aoi.callback.OnLeaveAOI(obj.aoi)
 		}
 	}
 }
@@ -205,7 +205,7 @@ func (t *tower) addWatcher(obj *aoiobj) {
 		if neighbor == obj {
 			continue
 		}
-		obj.aoi.Callback.OnEnterAOI(neighbor.aoi)
+		obj.aoi.callback.OnEnterAOI(neighbor.aoi)
 	}
 }
 
@@ -219,7 +219,7 @@ func (t *tower) removeWatcher(obj *aoiobj) {
 		if neighbor == obj {
 			continue
 		}
-		obj.aoi.Callback.OnLeaveAOI(neighbor.aoi)
+		obj.aoi.callback.OnLeaveAOI(neighbor.aoi)
 	}
 }
 

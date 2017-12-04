@@ -6,8 +6,9 @@ type AOI struct {
 	x        Coord
 	y        Coord
 	dist     Coord
-	Callback AOICallback
+	Data     interface{}
 
+	callback AOICallback
 	implData interface{}
 
 	//// Fields for XZListAOIManager
@@ -17,9 +18,10 @@ type AOI struct {
 	//markVal      int
 }
 
-func InitAOI(aoi *AOI, dist Coord, callback AOICallback) {
+func InitAOI(aoi *AOI, dist Coord, data interface{}, callback AOICallback) {
 	aoi.dist = dist
-	aoi.Callback = callback
+	aoi.Data = data
+	aoi.callback = callback
 }
 
 type AOICallback interface {
