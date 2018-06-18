@@ -14,7 +14,7 @@ const (
 	MIN_Y = -500
 	MAX_Y = 500
 
-	NUM_OBJS              = 4000
+	NUM_OBJS              = 1000
 	VERIFY_NEIGHBOR_COUNT = true
 )
 
