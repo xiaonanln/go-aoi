@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"os"
-	"runtime/pprof"
 	"testing"
 	"time"
 )
@@ -21,7 +19,7 @@ const (
 )
 
 func TestXZListAOIManager(t *testing.T) {
-	testAOI(t, "XZListAOI", NewXZListAOICalculator(), NUM_OBJS)
+	testAOI(t, "XZListAOI", NewXZListAOIManager(), NUM_OBJS)
 }
 
 func TestTowerAOIManager(t *testing.T) {
@@ -87,14 +85,16 @@ func testAOI(t *testing.T, manname string, aoiman AOIManager, numAOI int) {
 		aoiman.Enter(&obj.aoi, randCoord(MIN_X, MAX_X), randCoord(MIN_Y, MAX_Y))
 	}
 
-	proffd, _ := os.OpenFile(manname+".pprof", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0666)
-	defer proffd.Close()
+	//proffd, _ := os.OpenFile(manname+".pprof", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0666)
+	//defer proffd.Close()
 
-	pprof.StartCPUProfile(proffd)
+	//pprof.StartCPUProfile(proffd)
 	for i := 0; i < 10; i++ {
 		t0 := time.Now()
 		for _, obj := range objs {
 			aoiman.Moved(&obj.aoi, obj.aoi.x+randCoord(-10, 10), obj.aoi.y+randCoord(-10, 10))
+			aoiman.Leave(&obj.aoi)
+			aoiman.Enter(&obj.aoi, obj.aoi.x+randCoord(-10, 10), obj.aoi.y+randCoord(-10, 10))
 		}
 		dt := time.Now().Sub(t0)
 		t.Logf("%s tick %d objects takes %s", manname, numAOI, dt)
@@ -104,7 +104,7 @@ func testAOI(t *testing.T, manname string, aoiman AOIManager, numAOI int) {
 		aoiman.Leave(&obj.aoi)
 	}
 
-	pprof.StopCPUProfile()
+	//pprof.StopCPUProfile()
 
 	if VERIFY_NEIGHBOR_COUNT {
 		totalCalc := int64(0)

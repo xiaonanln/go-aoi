@@ -16,7 +16,7 @@ type XZListAOIManager struct {
 	zSweepList *yAOIList
 }
 
-func NewXZListAOICalculator() AOIManager {
+func NewXZListAOIManager() AOIManager {
 	return &XZListAOIManager{
 		xSweepList: newXAOIList(),
 		zSweepList: newYAOIList(),
@@ -41,6 +41,7 @@ func (aoiman *XZListAOIManager) Leave(aoi *AOI) {
 	xzaoi := aoi.implData.(*xzaoi)
 	aoiman.xSweepList.Remove(xzaoi)
 	aoiman.zSweepList.Remove(xzaoi)
+	aoiman.adjust(xzaoi)
 }
 
 // Moved is called when Entity moves in Space
