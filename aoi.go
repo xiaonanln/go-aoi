@@ -10,12 +10,6 @@ type AOI struct {
 
 	callback AOICallback
 	implData interface{}
-
-	//// Fields for XZListAOIManager
-	//neighbors    AOISet
-	//xPrev, xNext *AOI
-	//yPrev, yNext *AOI
-	//markVal      int
 }
 
 func InitAOI(aoi *AOI, dist Coord, data interface{}, callback AOICallback) {

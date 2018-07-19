@@ -80,7 +80,7 @@ func testAOI(t *testing.T, manname string, aoiman AOIManager, numAOI int) {
 	objs := []*TestObj{}
 	for i := 0; i < numAOI; i++ {
 		obj := &TestObj{Id: i + 1, neighbors: map[*TestObj]struct{}{}}
-		InitAOI(&obj.aoi, _DEFAULT_AOI_DISTANCE, obj, obj)
+		InitAOI(&obj.aoi, 100, obj, obj)
 		objs = append(objs, obj)
 		aoiman.Enter(&obj.aoi, randCoord(MIN_X, MAX_X), randCoord(MIN_Y, MAX_Y))
 	}

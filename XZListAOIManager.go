@@ -1,7 +1,5 @@
 package aoi
 
-const _DEFAULT_AOI_DISTANCE = 100
-
 type xzaoi struct {
 	aoi          *AOI
 	neighbors    map[*xzaoi]struct{}
