@@ -1,12 +1,13 @@
 package aoi
 
+// Coord is the type for coordinate axes values
 type Coord float32
 
 type AOI struct {
-	x        Coord
-	y        Coord
-	dist     Coord
-	Data     interface{}
+	x    Coord
+	y    Coord
+	dist Coord
+	Data interface{}
 
 	callback AOICallback
 	implData interface{}

@@ -14,6 +14,7 @@ type XZListAOIManager struct {
 	zSweepList *yAOIList
 }
 
+// NewXZListAOIManager creates a new XZListAOIManager
 func NewXZListAOIManager() AOIManager {
 	return &XZListAOIManager{
 		xSweepList: newXAOIList(),
