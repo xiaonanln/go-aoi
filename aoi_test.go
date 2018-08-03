@@ -19,7 +19,7 @@ const (
 )
 
 func TestXZListAOIManager(t *testing.T) {
-	testAOI(t, "XZListAOI", NewXZListAOIManager(), NUM_OBJS)
+	testAOI(t, "XZListAOI", NewXZListAOIManager(100), NUM_OBJS)
 }
 
 func TestTowerAOIManager(t *testing.T) {

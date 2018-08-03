@@ -15,10 +15,10 @@ type XZListAOIManager struct {
 }
 
 // NewXZListAOIManager creates a new XZListAOIManager
-func NewXZListAOIManager() AOIManager {
+func NewXZListAOIManager(aoidist Coord) AOIManager {
 	return &XZListAOIManager{
-		xSweepList: newXAOIList(),
-		zSweepList: newYAOIList(),
+		xSweepList: newXAOIList(aoidist),
+		zSweepList: newYAOIList(aoidist),
 	}
 }
 

@@ -1,12 +1,13 @@
 package aoi
 
 type xAOIList struct {
-	head *xzaoi
-	tail *xzaoi
+	aoidist Coord
+	head    *xzaoi
+	tail    *xzaoi
 }
 
-func newXAOIList() *xAOIList {
-	return &xAOIList{}
+func newXAOIList(aoidist Coord) *xAOIList {
+	return &xAOIList{aoidist: aoidist}
 }
 
 func (sl *xAOIList) Insert(aoi *xzaoi) {
@@ -129,14 +130,14 @@ func (sl *xAOIList) Mark(aoi *xzaoi) {
 	prev := aoi.xPrev
 	coord := aoi.aoi.x
 
-	minCoord := coord - aoi.aoi.dist
+	minCoord := coord - sl.aoidist
 	for prev != nil && prev.aoi.x >= minCoord {
 		prev.markVal += 1
 		prev = prev.xPrev
 	}
 
 	next := aoi.xNext
-	maxCoord := coord + aoi.aoi.dist
+	maxCoord := coord + sl.aoidist
 	for next != nil && next.aoi.x <= maxCoord {
 		next.markVal += 1
 		next = next.xNext
@@ -146,7 +147,7 @@ func (sl *xAOIList) Mark(aoi *xzaoi) {
 func (sl *xAOIList) GetClearMarkedNeighbors(aoi *xzaoi) {
 	prev := aoi.xPrev
 	coord := aoi.aoi.x
-	minCoord := coord - aoi.aoi.dist
+	minCoord := coord - sl.aoidist
 	for prev != nil && prev.aoi.x >= minCoord {
 		if prev.markVal == 2 {
 			aoi.neighbors[prev] = struct{}{}
@@ -159,7 +160,7 @@ func (sl *xAOIList) GetClearMarkedNeighbors(aoi *xzaoi) {
 	}
 
 	next := aoi.xNext
-	maxCoord := coord + aoi.aoi.dist
+	maxCoord := coord + sl.aoidist
 	for next != nil && next.aoi.x <= maxCoord {
 		if next.markVal == 2 {
 			aoi.neighbors[next] = struct{}{}
