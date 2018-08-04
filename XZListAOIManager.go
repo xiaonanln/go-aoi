@@ -10,6 +10,7 @@ type xzaoi struct {
 
 // XZListAOIManager is an implementation of AOICalculator using XZ lists
 type XZListAOIManager struct {
+	aoidist    Coord
 	xSweepList *xAOIList
 	zSweepList *yAOIList
 }
@@ -17,6 +18,7 @@ type XZListAOIManager struct {
 // NewXZListAOIManager creates a new XZListAOIManager
 func NewXZListAOIManager(aoidist Coord) AOIManager {
 	return &XZListAOIManager{
+		aoidist:    aoidist,
 		xSweepList: newXAOIList(aoidist),
 		zSweepList: newYAOIList(aoidist),
 	}
@@ -24,6 +26,8 @@ func NewXZListAOIManager(aoidist Coord) AOIManager {
 
 // Enter is called when Entity enters Space
 func (aoiman *XZListAOIManager) Enter(aoi *AOI, x, y Coord) {
+	aoi.dist = aoiman.aoidist
+
 	xzaoi := &xzaoi{
 		aoi:       aoi,
 		neighbors: map[*xzaoi]struct{}{},
